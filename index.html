@@ -19,14 +19,11 @@
         th { background: #f8f9fa; font-size: 12px; color: #666; text-transform: uppercase; }
         .score-total { font-weight: bold; color: var(--blue); text-align: right; }
         .grade-badge { padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: bold; margin-left: 8px; vertical-align: middle; }
-        .grade-a { background: #c8e6c9; color: #2e7d32; } /* Excellent */
-        .grade-c { background: #fff9c4; color: #f57f17; } /* Average */
-        .grade-f { background: #ffcdd2; color: #c62828; } /* Warning */
-        
+        .grade-a { background: #c8e6c9; color: #2e7d32; } 
+        .grade-c { background: #fff9c4; color: #f57f17; } 
+        .grade-f { background: #ffcdd2; color: #c62828; }
         .help-section { margin-top: 30px; text-align: center; border-top: 1px solid #eee; padding-top: 20px; }
         .whatsapp-btn { background: var(--wa-green); color: white; padding: 10px 20px; text-decoration: none; border-radius: 50px; font-size: 14px; font-weight: bold; display: inline-flex; align-items: center; gap: 8px; transition: 0.3s; }
-        .whatsapp-btn:hover { background: #128c7e; transform: scale(1.05); }
-        
         #loader { display: none; margin: 20px auto; border: 4px solid #f3f3f3; border-top: 4px solid var(--blue); border-radius: 50%; width: 30px; height: 30px; animation: spin 1s linear infinite; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
@@ -67,17 +64,18 @@
 
     <div class="help-section">
         <p style="font-size:13px; color:#555;">Result missing or ID not working?</p>
-        <a id="waLink" href="https://wa.me/2348000000000?text=Hello%20Admin,%20I%20am%20having%20trouble%20accessing%20my%20BOPC%20results." target="_blank" class="whatsapp-btn">
+        <a id="waLink" href="#" target="_blank" class="whatsapp-btn">
             Chat with Admin on WhatsApp
         </a>
     </div>
 </div>
 
 <script>
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwaIXxRfCUoOmYvYq4NCV58I34_uZ8eWzut7gTuFUCvliSXSwENDDABRWEBpfL2vX3D_A/exec";
+    // UPDATE WITH YOUR DEPLOYED APPS SCRIPT URL
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxKddNcjowgiUrW7rGSPDceP5tE-D8iPYxKmMH-GfrcPsRsHQUWHJGhK_gjXWA1xvPqow/exec";
     
-    // UPDATE THIS WITH THE SCHOOL ADMIN'S WHATSAPP NUMBER
-    const ADMIN_PHONE = "2348099449011"; // Use country code, no "+" or "-"
+    // UPDATE WITH YOUR ACTUAL ADMIN WHATSAPP NUMBER
+    const ADMIN_PHONE = "2348099449011"; 
 
     async function fetchResults() {
         const idInput = document.getElementById('studentId').value.trim().toUpperCase();
@@ -91,8 +89,8 @@
         resultArea.style.display = "none";
         scoreBody.innerHTML = "";
 
-        // Update WhatsApp message dynamically with the ID they tried
-        document.getElementById('waLink').href = `https://wa.me/${ADMIN_PHONE}?text=Hello%20BOPC%20Admin,%20I%20cannot%20find%20results%20for%20ID:%20${idInput}.%20Please%20help.`;
+        // Update WhatsApp link
+        document.getElementById('waLink').href = `https://wa.me/${ADMIN_PHONE}?text=Hello%20BOPC%20Admin,%20I%20cannot%20find%20results%20for%20ID:%20${idInput}.`;
 
         try {
             const response = await fetch(`${SCRIPT_URL}?studentId=${idInput}`);
@@ -120,11 +118,11 @@
                 loader.style.display = "none";
                 resultArea.style.display = "block";
             } else {
-                throw new Error("Student ID not found in current records.");
+                throw new Error("ID not found.");
             }
         } catch (error) {
             loader.style.display = "none";
-            alert("No data found for this ID. Please check the ID or contact the Admin below.");
+            alert("No data found for this ID. Please ensure scores have been uploaded by teachers.");
         }
     }
 
