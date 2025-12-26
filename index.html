@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BOPC - View CA Results</title>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; background: #0d47a1; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; padding: 20px; }
+        .card { background: white; padding: 40px; border-radius: 20px; box-shadow: 0 15px 35px rgba(0,0,0,0.3); width: 100%; max-width: 450px; text-align: center; }
+        .logo { font-size: 24px; font-weight: bold; color: #0d47a1; border-bottom: 2px solid #fbc02d; display: inline-block; margin-bottom: 20px; }
+        input { width: 100%; padding: 15px; margin: 20px 0; border: 2px solid #ddd; border-radius: 10px; font-size: 18px; text-align: center; box-sizing: border-box; }
+        .btn { background: #0d47a1; color: white; width: 100%; padding: 15px; border: none; border-radius: 10px; cursor: pointer; font-size: 18px; font-weight: bold; transition: 0.3s; }
+        .btn:hover { background: #1565c0; }
+        #resultView { margin-top: 30px; display: none; text-align: left; animation: fadeIn 0.5s; }
+        .res-item { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #eee; font-size: 16px; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <div class="logo">BOLA OLAT PRIVATE COLLEGE</div>
+    <h2 style="margin: 0 0 10px 0;">CA Result Portal</h2>
+    <p style="color:#666; margin: 0;">Enter your School ID to view mid-term performance</p>
+    
+    <input type="text" id="idInput" placeholder="BOPC/XX/000">
+    <button class="btn" onclick="fetchResult()">Check My CA Score</button>
+
+    <div id="resultView">
+        <h3 id="stuName" style="color:#0d47a1; margin:0; text-transform: uppercase;"></h3>
+        <p id="stuClass" style="color:#666; font-size:14px; margin:5px 0 20px 0;"></p>
+        <div style="background:#f9f9f9; padding: 15px; border-radius: 10px;">
+            <div id="scoreTable"></div>
+        </div>
+        <p style="font-size: 12px; text-align: center; color: #999; margin-top: 20px;">Maximum CA Total: 40 Marks</p>
+        <button class="btn" style="background:#555; margin-top:10px; padding:10px;" onclick="window.print()">Print Report</button>
+    </div>
+</div>
+
+<script>
+    async function fetchResult() {
+        const code = document.getElementById('idInput').value.trim();
+        if(!code) return alert("Please enter your School ID");
+        
+        const btn = document.querySelector('.btn');
+        btn.innerText = "Searching...";
+        btn.disabled = true;
+
+        try {
+            const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwRd15pg_DwB6w9KnGmIa2O9gZ_Z21O0GtC90kxeBGbTx-uDcnt9rnQxGwS63zgyeRFTg/exec";
+            const response = await fetch(`${SCRIPT_URL}?code=${code}`);
+            const data = await response.json();
+
+            if(data.length > 0) {
+                document.getElementById('stuName').innerText = data[0].name;
+                document.getElementById('stuClass').innerText = "Class: " + data[0].class;
+                
+                let html = "";
+                data.forEach(item => {
+                    html += `<div class="res-item">
+                        <b>${item.subject}</b>
+                        <span style="color:#2e7d32; font-weight:bold;">${item.total} / 40</span>
+                    </div>`;
+                });
+                document.getElementById('scoreTable').innerHTML = html;
+                document.getElementById('resultView').style.display = 'block';
+            } else {
+                alert("No record found. Please check your School ID.");
+            }
+        } catch (e) {
+            alert("Connection error. Try again.");
+        } finally {
+            btn.innerText = "Check My CA Score";
+            btn.disabled = false;
+        }
+    }
+</script>
+</body>
+</html>
