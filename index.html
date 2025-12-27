@@ -3,140 +3,154 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BOPC - Student Result Portal</title>
+    <title>BOPC Student - Result Portal</title>
     <style>
-        :root { --blue: #0d47a1; --gold: #fbc02d; --light: #f4f7f6; --dark: #333; --wa-green: #25D366; }
-        body { font-family: 'Segoe UI', Tahoma, sans-serif; background: var(--light); margin: 0; padding: 20px; }
-        .container { max-width: 600px; margin: 0 auto; background: white; padding: 30px; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
-        .header { text-align: center; border-bottom: 3px solid var(--blue); margin-bottom: 25px; }
-        .search-box { background: #e3f2fd; padding: 25px; border-radius: 10px; text-align: center; }
-        input[type="text"] { width: 85%; padding: 15px; font-size: 18px; border: 2px solid var(--blue); border-radius: 8px; text-align: center; text-transform: uppercase; box-sizing: border-box; }
-        .btn { background: var(--blue); color: white; padding: 15px 30px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; margin-top: 15px; width: 85%; font-size: 16px; }
-        .result-card { margin-top: 25px; border: 1px solid #ddd; border-radius: 10px; overflow: hidden; display: none; }
-        .student-info { background: var(--blue); color: white; padding: 15px; text-align: center; }
-        table { width: 100%; border-collapse: collapse; }
-        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #eee; }
-        th { background: #f8f9fa; font-size: 12px; color: #666; text-transform: uppercase; }
-        .score-total { font-weight: bold; color: var(--blue); text-align: right; }
-        .grade-badge { padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: bold; margin-left: 8px; vertical-align: middle; }
-        .grade-a { background: #c8e6c9; color: #2e7d32; } 
-        .grade-c { background: #fff9c4; color: #f57f17; } 
-        .grade-f { background: #ffcdd2; color: #c62828; }
-        .help-section { margin-top: 30px; text-align: center; border-top: 1px solid #eee; padding-top: 20px; }
-        .whatsapp-btn { background: var(--wa-green); color: white; padding: 10px 20px; text-decoration: none; border-radius: 50px; font-size: 14px; font-weight: bold; display: inline-flex; align-items: center; gap: 8px; transition: 0.3s; }
-        #loader { display: none; margin: 20px auto; border: 4px solid #f3f3f3; border-top: 4px solid var(--blue); border-radius: 50%; width: 30px; height: 30px; animation: spin 1s linear infinite; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        :root { --blue: #0d47a1; --gold: #fbc02d; --light: #f4f7f6; --text: #333; }
+        body { font-family: 'Segoe UI', Tahoma, sans-serif; background: var(--light); padding: 20px; margin: 0; color: var(--text); }
+        .container { max-width: 700px; margin: 20px auto; background: white; padding: 30px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+        .header { text-align: center; border-bottom: 4px solid var(--blue); margin-bottom: 30px; padding-bottom: 15px; }
+        .search-card { background: #e3f2fd; padding: 25px; border-radius: 12px; border: 1px solid #bbdefb; text-align: center; margin-bottom: 30px; }
+        .input-group { display: flex; gap: 10px; justify-content: center; margin-top: 15px; }
+        input[type="text"] { padding: 15px; border: 2px solid var(--blue); border-radius: 8px; width: 60%; font-size: 18px; text-transform: uppercase; font-weight: bold; }
+        .btn { padding: 15px 25px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; background: var(--blue); color: white; transition: 0.3s; font-size: 16px; }
+        .btn:hover { background: #0a3a82; transform: translateY(-2px); }
+        
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; overflow: hidden; border-radius: 10px; border: 1px solid #ddd; }
+        th { background: var(--blue); color: white; padding: 15px; font-size: 14px; text-transform: uppercase; text-align: left; }
+        td { padding: 15px; border-bottom: 1px solid #eee; font-size: 16px; }
+        tr:last-child td { border-bottom: none; }
+        tr:nth-child(even) { background-color: #f9f9f9; }
+        
+        .score-total { font-weight: 800; color: var(--blue); font-size: 18px; text-align: right; }
+        .student-info { background: #fffde7; padding: 15px; border-radius: 8px; border: 1px solid var(--gold); margin-bottom: 20px; display: none; }
+        .hidden { display: none; }
+        
+        #loading { text-align: center; margin: 20px; color: var(--blue); font-weight: bold; }
+        .status-pill { background: var(--gold); color: black; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: bold; }
+
+        @media (max-width: 600px) {
+            .input-group { flex-direction: column; }
+            input[type="text"] { width: 100%; box-sizing: border-box; }
+        }
     </style>
 </head>
 <body>
 
 <div class="container">
     <div class="header">
-        <h2 style="color:var(--blue); margin-bottom:5px;">BOLA OLAT PRIVATE COLLEGE</h2>
-        <p style="margin-top:0; color:#666; font-weight:bold;">Student Performance Portal</p>
+        <h1 style="color:var(--blue); margin:0;">BOLA OLAT PRIVATE COLLEGE</h1>
+        <p style="margin:5px 0; font-weight: bold; color: #555;">STUDENT CA CHECKER PORTAL</p>
     </div>
 
-    <div class="search-box">
-        <label style="display:block; margin-bottom:10px; color:var(--blue); font-weight:600;">SEARCH BY STUDENT ID</label>
-        <input type="text" id="studentId" placeholder="ENTER ID (e.g. BOC1226)">
-        <button class="btn" onclick="fetchResults()">CHECK MY CA RESULTS</button>
-        <div id="loader"></div>
-    </div>
-
-    <div id="resultArea" class="result-card">
-        <div class="student-info">
-            <h3 id="displayName" style="margin:0; text-transform: uppercase;">STUDENT NAME</h3>
-            <p id="displayClass" style="margin:5px 0 0 0; font-size:14px; opacity:0.9;">Class: Loading...</p>
+    <div class="search-card">
+        <label style="font-weight: bold; color: var(--blue);">Enter Your Student ID</label>
+        <div class="input-group">
+            <input type="text" id="studentId" placeholder="e.g. BOC1086" autocomplete="off">
+            <button class="btn" onclick="fetchResult()">VIEW RESULT</button>
         </div>
+    </div>
+
+    <div id="loading" class="hidden">🔄 Fetching your records from the database...</div>
+
+    <div id="resultArea" class="hidden">
+        <div id="infoBox" class="student-info">
+            <div style="font-size: 14px; color: #666;">STUDENT NAME:</div>
+            <div id="displayName" style="font-size: 20px; font-weight: bold; color: var(--blue);"></div>
+        </div>
+
         <table>
             <thead>
                 <tr>
                     <th>Subject</th>
-                    <th style="text-align:right;">CA Score (40)</th>
+                    <th style="text-align: right;">Total Score (40)</th>
                 </tr>
             </thead>
-            <tbody id="scoreTableBody"></tbody>
+            <tbody id="resultTableBody"></tbody>
         </table>
-        <div style="padding: 15px; background: #fdfdfd; text-align: center; font-size: 11px; color: #888;">
-            *Scores above 30 = Distinction | 20-29 = Pass | Below 20 = Low
-        </div>
-    </div>
-
-    <div class="help-section">
-        <p style="font-size:13px; color:#555;">Result missing or ID not working?</p>
-        <a id="waLink" href="#" target="_blank" class="whatsapp-btn">
-            Chat with Admin on WhatsApp
-        </a>
+        
+        <p style="text-align: center; font-size: 12px; color: #888; margin-top: 25px;">
+            <i>This result is based on current continuous assessment records.</i>
+        </p>
     </div>
 </div>
 
 <script>
-    // UPDATE WITH YOUR DEPLOYED APPS SCRIPT URL
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxKddNcjowgiUrW7rGSPDceP5tE-D8iPYxKmMH-GfrcPsRsHQUWHJGhK_gjXWA1xvPqow/exec";
-    
-    // UPDATE WITH YOUR ACTUAL ADMIN WHATSAPP NUMBER
-    const ADMIN_PHONE = "2348099449011"; 
+// REPLACE WITH YOUR GOOGLE APPS SCRIPT WEB APP URL
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxsZDHV5K0zBIEMx7aJhcfR_Qph3Yc9MBC92K3D6lDt0Wuayighefhv8TBJJlzxoAbVrg/exec";
 
-    async function fetchResults() {
-        const idInput = document.getElementById('studentId').value.trim().toUpperCase();
-        const loader = document.getElementById('loader');
-        const resultArea = document.getElementById('resultArea');
-        const scoreBody = document.getElementById('scoreTableBody');
+async function fetchResult() {
+    const idInput = document.getElementById('studentId').value.trim().toUpperCase();
+    const loading = document.getElementById('loading');
+    const resultArea = document.getElementById('resultArea');
+    const tableBody = document.getElementById('resultTableBody');
+    const infoBox = document.getElementById('infoBox');
+    const displayName = document.getElementById('displayName');
 
-        if (!idInput) { alert("Please enter a Student ID"); return; }
+    if(!idInput) {
+        alert("Please enter your Student ID.");
+        return;
+    }
 
-        loader.style.display = "block";
-        resultArea.style.display = "none";
-        scoreBody.innerHTML = "";
+    // Reset UI
+    loading.classList.remove('hidden');
+    resultArea.classList.add('hidden');
+    tableBody.innerHTML = "";
 
-        // Update WhatsApp link
-        document.getElementById('waLink').href = `https://wa.me/${ADMIN_PHONE}?text=Hello%20BOPC%20Admin,%20I%20cannot%20find%20results%20for%20ID:%20${idInput}.`;
+    try {
+        // Fetch data using the GET method defined in your Apps Script
+        const response = await fetch(`${SCRIPT_URL}?id=${idInput}`);
+        const data = await response.json();
 
-        try {
-            const response = await fetch(`${SCRIPT_URL}?studentId=${idInput}`);
-            const data = await response.json();
-
-            if (data.status === "success" && data.results.length > 0) {
-                document.getElementById('displayName').innerText = data.studentName;
-                document.getElementById('displayClass').innerText = "Class: " + data.studentClass;
-
-                data.results.forEach(item => {
-                    const gradeClass = getGradeClass(item.score);
-                    const gradeLetter = getGradeLetter(item.score);
-                    
-                    scoreBody.innerHTML += `
-                        <tr>
-                            <td style="font-weight:500;">${item.subject}</td>
-                            <td class="score-total">
-                                ${item.score.toFixed(1)}
-                                <span class="grade-badge ${gradeClass}">${gradeLetter}</span>
-                            </td>
-                        </tr>
-                    `;
-                });
-
-                loader.style.display = "none";
-                resultArea.style.display = "block";
-            } else {
-                throw new Error("ID not found.");
-            }
-        } catch (error) {
-            loader.style.display = "none";
-            alert("No data found for this ID. Please ensure scores have been uploaded by teachers.");
+        if (!data || data.length === 0) {
+            loading.classList.add('hidden');
+            alert("No results found for Student ID: " + idInput + ". Please check your ID and try again.");
+            return;
         }
-    }
 
-    function getGradeLetter(s) {
-        if (s >= 30) return "A";
-        if (s >= 20) return "C";
-        return "D";
-    }
+        // Set Student Name from the first record found
+        displayName.innerText = data[0].name || "N/A";
+        infoBox.style.display = "block";
 
-    function getGradeClass(s) {
-        if (s >= 30) return "grade-a";
-        if (s >= 20) return "grade-c";
-        return "grade-f";
+        // Generate Rows and Sum Scores
+        data.forEach(item => {
+            // Convert to numbers and sum them
+            const t1 = parseFloat(item.t1) || 0;
+            const t2 = parseFloat(item.t2) || 0;
+            const note = parseFloat(item.note) || 0;
+            const ext = parseFloat(item.ext) || 0;
+            const int = parseFloat(item.int) || 0;
+            
+            const grandTotal = t1 + t2 + note + ext + int;
+
+            const row = `
+                <tr>
+                    <td>
+                        <div style="font-weight: 600;">${item.subject}</div>
+                    </td>
+                    <td class="score-total">
+                        ${grandTotal.toFixed(1)}
+                    </td>
+                </tr>
+            `;
+            tableBody.innerHTML += row;
+        });
+
+        loading.classList.add('hidden');
+        resultArea.classList.remove('hidden');
+
+    } catch (error) {
+        console.error("Fetch error:", error);
+        loading.classList.add('hidden');
+        alert("Server error. Please ensure your Google Apps Script is deployed as 'Anyone' and the URL is correct.");
     }
+}
+
+// Allow "Enter" key to trigger search
+document.getElementById('studentId').addEventListener('keypress', function (e) {
+    if (e.key === 'Enter') {
+        fetchResult();
+    }
+});
 </script>
 
 </body>
