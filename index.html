@@ -15,22 +15,25 @@
         .btn { padding: 15px 25px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; background: var(--blue); color: white; transition: 0.3s; font-size: 16px; }
         .btn:hover { background: #0a3a82; transform: translateY(-2px); }
         
-        table { width: 100%; border-collapse: collapse; margin-top: 20px; overflow: hidden; border-radius: 10px; border: 1px solid #ddd; }
+        /* Information Header Styling */
+        .student-profile { background: #fffde7; padding: 20px; border-radius: 10px; border: 2px solid var(--gold); margin-bottom: 25px; display: none; display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .info-item label { font-size: 12px; color: #777; font-weight: bold; text-transform: uppercase; display: block; }
+        .info-item span { font-size: 18px; font-weight: bold; color: var(--blue); }
+
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; overflow: hidden; border-radius: 10px; border: 1px solid #ddd; }
         th { background: var(--blue); color: white; padding: 15px; font-size: 14px; text-transform: uppercase; text-align: left; }
         td { padding: 15px; border-bottom: 1px solid #eee; font-size: 16px; }
         tr:last-child td { border-bottom: none; }
         tr:nth-child(even) { background-color: #f9f9f9; }
         
         .score-total { font-weight: 800; color: var(--blue); font-size: 18px; text-align: right; }
-        .student-info { background: #fffde7; padding: 15px; border-radius: 8px; border: 1px solid var(--gold); margin-bottom: 20px; display: none; }
         .hidden { display: none; }
-        
         #loading { text-align: center; margin: 20px; color: var(--blue); font-weight: bold; }
-        .status-pill { background: var(--gold); color: black; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: bold; }
 
         @media (max-width: 600px) {
             .input-group { flex-direction: column; }
             input[type="text"] { width: 100%; box-sizing: border-box; }
+            .student-profile { grid-template-columns: 1fr; }
         }
     </style>
 </head>
@@ -53,9 +56,16 @@
     <div id="loading" class="hidden">🔄 Fetching your records from the database...</div>
 
     <div id="resultArea" class="hidden">
-        <div id="infoBox" class="student-info">
-            <div style="font-size: 14px; color: #666;">STUDENT NAME:</div>
-            <div id="displayName" style="font-size: 20px; font-weight: bold; color: var(--blue);"></div>
+        
+        <div id="studentProfile" class="student-profile">
+            <div class="info-item">
+                <label>Full Name</label>
+                <span id="displayName">---</span>
+            </div>
+            <div class="info-item">
+                <label>Current Class</label>
+                <span id="displayClass">---</span>
+            </div>
         </div>
 
         <table>
@@ -69,87 +79,78 @@
         </table>
         
         <p style="text-align: center; font-size: 12px; color: #888; margin-top: 25px;">
-            <i>This result is based on current continuous assessment records.</i>
+            <i>Note: Result is based on current continuous assessment records.</i>
         </p>
     </div>
 </div>
 
 <script>
 // REPLACE WITH YOUR GOOGLE APPS SCRIPT WEB APP URL
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxsZDHV5K0zBIEMx7aJhcfR_Qph3Yc9MBC92K3D6lDt0Wuayighefhv8TBJJlzxoAbVrg/exec";
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwr9E5eGejxnZOQGz8D-KPPXs0EcWoVJaauOWFU_5CtfFzlf52r52tBvxgwZ8Mvtnt-XA/exec";
 
 async function fetchResult() {
     const idInput = document.getElementById('studentId').value.trim().toUpperCase();
     const loading = document.getElementById('loading');
     const resultArea = document.getElementById('resultArea');
     const tableBody = document.getElementById('resultTableBody');
-    const infoBox = document.getElementById('infoBox');
+    const profileBox = document.getElementById('studentProfile');
     const displayName = document.getElementById('displayName');
+    const displayClass = document.getElementById('displayClass');
 
     if(!idInput) {
         alert("Please enter your Student ID.");
         return;
     }
 
-    // Reset UI
     loading.classList.remove('hidden');
     resultArea.classList.add('hidden');
+    profileBox.style.display = "none";
     tableBody.innerHTML = "";
 
     try {
-        // Fetch data using the GET method defined in your Apps Script
         const response = await fetch(`${SCRIPT_URL}?id=${idInput}`);
         const data = await response.json();
 
         if (!data || data.length === 0) {
             loading.classList.add('hidden');
-            alert("No results found for Student ID: " + idInput + ". Please check your ID and try again.");
+            alert("No results found for Student ID: " + idInput);
             return;
         }
 
-        // Set Student Name from the first record found
-        displayName.innerText = data[0].name || "N/A";
-        infoBox.style.display = "block";
+        // Set Student Name and Class from the first record found
+        displayName.innerText = data[0].name || "Not Found";
+        displayClass.innerText = data[0].class || "Not Found";
+        profileBox.style.display = "grid";
 
         // Generate Rows and Sum Scores
         data.forEach(item => {
-            // Convert to numbers and sum them
             const t1 = parseFloat(item.t1) || 0;
             const t2 = parseFloat(item.t2) || 0;
             const note = parseFloat(item.note) || 0;
             const ext = parseFloat(item.ext) || 0;
             const int = parseFloat(item.int) || 0;
-            
             const grandTotal = t1 + t2 + note + ext + int;
 
-            const row = `
+            tableBody.innerHTML += `
                 <tr>
-                    <td>
-                        <div style="font-weight: 600;">${item.subject}</div>
-                    </td>
-                    <td class="score-total">
-                        ${grandTotal.toFixed(1)}
-                    </td>
+                    <td><div style="font-weight: 600;">${item.subject}</div></td>
+                    <td class="score-total">${grandTotal.toFixed(1)}</td>
                 </tr>
             `;
-            tableBody.innerHTML += row;
         });
 
         loading.classList.add('hidden');
         resultArea.classList.remove('hidden');
 
     } catch (error) {
-        console.error("Fetch error:", error);
         loading.classList.add('hidden');
-        alert("Server error. Please ensure your Google Apps Script is deployed as 'Anyone' and the URL is correct.");
+        alert("Server error. Check your connection.");
     }
 }
 
-// Allow "Enter" key to trigger search
-document.getElementById('studentId').addEventListener('keypress', function (e) {
-    if (e.key === 'Enter') {
-        fetchResult();
-    }
+// Allow "Enter" key
+document.getElementById('studentId').addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') fetchResult();
 });
 </script>
 
